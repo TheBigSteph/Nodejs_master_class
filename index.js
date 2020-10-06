@@ -14,17 +14,17 @@ var _data = require('./lib/data');
 
 // TESTING
 // @TODO delete this
-_data.read('test', 'newFile1', function(err, data) {
-    console.log('This was the error', err, 'and this was data', data);
-})
+_data.update('test', 'newFile', {fizz: 'buzz'}, (err) => {
+    console.log('This was the error', err);
+});
 
 // Instantiate the HTTP server
-var httpServer = http.createServer(function(req, res) {
+var httpServer = http.createServer((req, res) => {
     unifiedServer(req, res);
 });
 
 // Start the HTTP server
-httpServer.listen(config.httpPort, function() {
+httpServer.listen(config.httpPort, () => {
     console.log('The server is listerning on port '+config.httpPort);
 });
 
@@ -33,17 +33,17 @@ var httpsServerOptions = {
     key: fs.readFileSync('./https/key.pem'),
     cert: fs.readFileSync('./https/-cert.pem')
 }
-var httpsServer = https.createServer(httpsServerOptions, function(req, res) {
+var httpsServer = https.createServer(httpsServerOptions, (req, res) => {
     unifiedServer(req, res);
 })
 
 // Start the HTTPS server
-httpsServer.listen(config.httpsPort, function() {
+httpsServer.listen(config.httpsPort, () => {
     console.log('The server is listerning on port '+config.httpsPort)
 })
 
 // All the server logic for both the http and https server
-var unifiedServer = function(req, res) {
+var unifiedServer = (req, res) => {
     // Get Url and parse it
     var parseUrl = url.parse(req.url, true);
 
@@ -63,11 +63,11 @@ var unifiedServer = function(req, res) {
     // Get the payload, if any
     var decoder = new StringDecoder('utf-8');
     var buffer = '';
-    req.on('data', function(data) {
+    req.on('data', (data) => {
         buffer += decoder.write(data);
     });
 
-    req.on('end', function() {
+    req.on('end', () => {
         buffer += decoder.end();
 
         // Choose the handler this request should go to. If one is not found, use the notFound handler
@@ -109,16 +109,16 @@ var unifiedServer = function(req, res) {
 var handlers = {}
 
 // Ping handler
-handlers.ping = function(data, callback) {
+handlers.ping = (data, callback) => {
     callback(200);
 }
 
 // Not found handler
-handlers.notFound = function(data, callback) {
+handlers.notFound = (data, callback) => {
     callback(404);
 }
 
 // Define a resquest router
-var router = {
+const router = {
     ping: handlers.ping
 };
