@@ -10,6 +10,13 @@ var url = require('url');
 var StringDecoder = require('string_decoder').StringDecoder;
 var config = require('./config');
 var fs = require('fs');
+var _data = require('./lib/data');
+
+// TESTING
+// @TODO delete this
+_data.read('test', 'newFile1', function(err, data) {
+    console.log('This was the error', err, 'and this was data', data);
+})
 
 // Instantiate the HTTP server
 var httpServer = http.createServer(function(req, res) {
@@ -64,9 +71,9 @@ var unifiedServer = function(req, res) {
         buffer += decoder.end();
 
         // Choose the handler this request should go to. If one is not found, use the notFound handler
-         var chosenHandler = typeof(router[trimmedPath]) !== 'undefined' ? router[trimmedPath] : handlers.notFound;
+        var chosenHandler = typeof(router[trimmedPath]) !== 'undefined' ? router[trimmedPath] : handlers.notFound;
 
-         // Contruct the data object to send to the handler
+        // Contruct the data object to send to the handler
         var data = {
             'trimmedPath': trimmedPath,
             'queryStringObject': queryStringObject,
